@@ -628,3 +628,103 @@ class SummerTemplateBot2026(ForecastBot):
             The reasoning for the {question_type} Question was as such:
             ```
             {reasoning.reasoning}
+            ```
+            This is absolutely essential: do NOT use this reasoning to re-forecast the {question_type} question.
+            """
+        )
+
+    def _get_conditional_disclaimer_if_necessary(
+        self, question: MetaculusQuestion
+    ) -> str:
+        if question.conditional_type not in ["yes", "no"]:
+            return ""
+        return clean_indents(
+            """
+            As you are given a conditional question with a parent and child, you are to only forecast the **CHILD** question, given the parent question's resolution.
+            You never re-forecast the parent question under any circumstances, but you use probabilistic reasoning, strongly considering the parent question's resolution, to forecast the child question.
+            """
+        )
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
+    parser = argparse.ArgumentParser(description="Run the template forecasting bot")
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["tournament", "metaculus_cup", "test_questions"],
+        default="tournament",
+        help="What to forecast on (default: tournament)",
+    )
+    args = parser.parse_args()
+    run_mode: Literal["tournament", "metaculus_cup", "test_questions"] = args.mode
+
+    check_environment(strict=True)
+    publish_to_metaculus = True
+    print_startup_banner(run_mode, will_publish=publish_to_metaculus)
+
+    template_bot = SummerTemplateBot2026(
+        research_reports_per_question=1,
+        predictions_per_research_report=5,
+        use_research_summary_to_forecast=False,
+        publish_reports_to_metaculus=publish_to_metaculus,
+        folder_to_save_reports_to=None,
+        skip_previously_forecasted_questions=True,
+        extra_metadata_in_explanation=True,
+        llms={
+            "default": GeneralLlm(
+                model="openrouter/google/gemini-2.5-flash:free",
+                temperature=0.3,
+                timeout=40,
+                allowed_tries=2,
+            ),
+            "summarizer": "openrouter/google/gemini-2.5-flash:free",
+            "researcher": "openrouter/google/gemini-2.5-flash:free",
+            "parser": "openrouter/google/gemini-2.5-flash:free",
+        },
+    )
+
+    TOURNAMENT_URLS = {
+        "tournament": "https://www.metaculus.com/tournament/summer-futureeval-2026/",
+        "metaculus_cup": "https://www.metaculus.com/tournament/metaculus-cup-summer-2025/",
+        "test_questions": "https://www.metaculus.com/tournament/bot-testing-area/",
+    }
+
+    client = MetaculusClient()
+    if run_mode == "tournament":
+        seasonal_tournament_reports = asyncio.run(
+            template_bot.forecast_on_tournament(
+                client.CURRENT_AI_COMPETITION_ID, return_exceptions=True
+            )
+        )
+        minibench_reports = asyncio.run(
+            template_bot.forecast_on_tournament(
+                client.CURRENT_MINIBENCH_ID, return_exceptions=True
+            )
+        )
+        forecast_reports = seasonal_tournament_reports + minibench_reports
+    elif run_mode == "metaculus_cup":
+        template_bot.skip_previously_forecasted_questions = False
+        forecast_reports = asyncio.run(
+            template_bot.forecast_on_tournament(
+                client.CURRENT_METACULUS_CUP_ID, return_exceptions=True
+            )
+        )
+    elif run_mode == "test_questions":
+        template_bot.skip_previously_forecasted_questions = False
+        forecast_reports = asyncio.run(
+            template_bot.forecast_on_tournament(
+                "bot-testing-area", return_exceptions=True
+            )
+        )
+
+    template_bot.log_report_summary(forecast_reports)
+    print_run_summary_banner(
+        forecast_reports,
+        will_publish=publish_to_metaculus,
+        tournament_url=TOURNAMENT_URLS.get(run_mode),
+    )
