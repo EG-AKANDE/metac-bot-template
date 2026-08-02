@@ -93,9 +93,9 @@ class SummerTemplateBot2026(ForecastBot):
                 timeout=40,
                 allowed_tries=2,
             ),
-            "summarizer": "openai/gpt-4o-mini",
-            "researcher": "asknews/news-summaries",
-            "parser": "openai/gpt-4o-mini",
+            "summarizer": "openrouter/openai/gpt-4o-mini",
+            "researcher": "openrouter/asknews/news-summaries",
+            "parser": "openrouter/openai/gpt-4o-mini",
         },
     )
     ```
@@ -677,14 +677,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="openrouter/google/gemini-2.5-flash:free",
+                model="openrouter/free",
                 temperature=0.3,
                 timeout=40,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/google/gemini-2.5-flash:free",
-            "researcher": "openrouter/google/gemini-2.5-flash:free",
-            "parser": "openrouter/google/gemini-2.5-flash:free",
+            "summarizer": "openrouter/free",
+            "researcher": "openrouter/free",
+            "parser": "openrouter/free",
         },
     )
 
