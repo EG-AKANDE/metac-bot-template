@@ -677,14 +677,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="openrouter/nvidia/nemotron-3-super-120b-a12b:free",
+                model="openrouter/meta-llama/llama-3.1-8b-instruct:free",
                 temperature=0.3,
                 timeout=40,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/openai/gpt-oss-120b:free",
-            "researcher": "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
-            "parser": "openrouter/openai/gpt-oss-120b:free",
+            "summarizer": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
+            "researcher": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
+            "parser": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
         },
     )
 
