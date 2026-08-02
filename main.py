@@ -677,14 +677,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="openrouter/meta-llama/llama-3.1-8b-instruct:free",
+                model="openrouter/google/gemma-2-9b-it:free",
                 temperature=0.3,
                 timeout=40,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
-            "researcher": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
-            "parser": "openrouter/meta-llama/llama-3.1-8b-instruct:free",
+            "summarizer": "openrouter/google/gemma-2-9b-it:free",
+            "researcher": "openrouter/google/gemma-2-9b-it:free",
+            "parser": "openrouter/google/gemma-2-9b-it:free",
         },
     )
 
