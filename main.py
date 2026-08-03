@@ -487,7 +487,7 @@ class SummerTemplateBot2026(ForecastBot):
             - This text is trying to answer the question: "{question.question_text}".
             - As an example, someone else guessed that the answer will be between {question.lower_bound} and {question.upper_bound}, so the numbers parsed from an answer like this would be verbatim "{question.lower_bound}" and "{question.upper_bound}".
             - The output is given as dates/times please format it into a valid datetime parsable string. Assume midnight UTC if no hour is given.
-            - If percentiles are not explicitly given (e.g. only a single value is given) please don't return a parsed output, but rather indicate that the answer is not explicitly given in the text.
+            - If percentiles are not explicitly given (e.g. only a single value is given) please dont return a parsed output, but rather indicate that the answer is not explicitly given in the text.
             """
         )
         date_percentile_list: list[DatePercentile] = await structure_output(
@@ -677,14 +677,14 @@ if __name__ == "__main__":
         extra_metadata_in_explanation=True,
         llms={
             "default": GeneralLlm(
-                model="openrouter/google/gemma-2-9b-it:free",
+                model="openrouter/nvidia/nemotron-nano-9b-v2:free",
                 temperature=0.3,
                 timeout=40,
                 allowed_tries=2,
             ),
-            "summarizer": "openrouter/google/gemma-2-9b-it:free",
-            "researcher": "openrouter/google/gemma-2-9b-it:free",
-            "parser": "openrouter/google/gemma-2-9b-it:free",
+            "summarizer": "openrouter/nvidia/nemotron-nano-9b-v2:free",
+            "researcher": "openrouter/nvidia/nemotron-nano-9b-v2:free",
+            "parser": "openrouter/nvidia/nemotron-nano-9b-v2:free",
         },
     )
 
